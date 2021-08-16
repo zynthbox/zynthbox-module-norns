@@ -1,0 +1,9 @@
+[Desktop Entry]
+Name=Norns QML Shield
+GenericName=Norns QML Shield
+Comment=A frontend for the Norns syntheziser
+Exec=norns-qml-shield
+Terminal=false
+Type=Application
+Categories=Qt;KDE;Audio;
+Icon=norns-qml-shield
