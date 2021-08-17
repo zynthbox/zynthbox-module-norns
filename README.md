@@ -9,9 +9,12 @@ a Norns synthesizer. It currently expects norns to be instaleld into the
 
 ## Requirements
 
+To build this, you need development packages for the following things:
+
 * CMake 3.13 or later
 * ECM version 5.52 or later
 * Qt 5.11 or later
+* X11
 * Kirigami 2.7 or later (which also translates roughly to the version found in
   KDE Frameworks 5.54)7
 

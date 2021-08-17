@@ -3,7 +3,7 @@ import QtQuick.Layouts 1.4
 import QtQuick.Window 2.11
 import QtQuick.Controls 2.4 as QQC2
 import org.kde.kirigami 2.4 as Kirigami
-import Process 1.0
+import Shield 1.0
 
 QQC2.ApplicationWindow {
     id: component
@@ -37,7 +37,12 @@ QQC2.ApplicationWindow {
 
     property int buttonSize: height / 9
     property int dialSize: height / 6
-    
+
+    XSendKey {
+        id: keySender
+        windowName: "matron"
+    }
+
     Row {
         anchors {
             top: parent.top
