@@ -10,6 +10,7 @@ QQC2.AbstractButton {
     signal slideStarted(point startPoint);
     signal slideUpdated(point updatedPoint);
     signal slideEnded();
+    signal tick(int value);
     property real currentPointDistance
     property real currentPointAngle
     property bool showRidges: false
@@ -95,8 +96,17 @@ QQC2.AbstractButton {
         function pointAngle(point1, point2) {
             return Math.atan2(point2.y - point1.y, point2.x - point1.x) * 180 / Math.PI;
         }
+        property int mostRecentTickTotal;
+        function updateTick() {
+            var updatedTick = Math.round((component.currentPointAngle + component.currentPointDistance) / 10);
+            if (updatedTick != mostRecentTickTotal) {
+                component.tick(mostRecentTickTotal - updatedTick);
+                mostRecentTickTotal = updatedTick;
+            }
+        }
         onPressed: {
             if (pushSlidePoint.pressed) {
+                mostRecentTickTotal = 0;
                 startPoint = updatedPoint = Qt.point(pushSlidePoint.x, pushSlidePoint.y);
                 component.currentPointDistance = 0;
                 component.currentPointAngle = 0;
@@ -111,6 +121,7 @@ QQC2.AbstractButton {
             component.currentPointDistance = pointDistance(startPoint, updatedPoint);
             component.currentPointAngle = pointAngle(startPoint, updatedPoint);
             component.slideUpdated(updatedPoint);
+            updateTick();
         }
         onReleased: {
             if (!pushSlidePoint.pressed) {
