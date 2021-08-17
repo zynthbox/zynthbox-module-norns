@@ -131,7 +131,7 @@ QQC2.ApplicationWindow {
                         key = "a";
                     }
                     for (var i = 0; i < Math.abs(value); ++i) {
-                        keySender.sendKey("");
+                        keySender.sendKey(key);
                     }
                 }
             }
@@ -167,7 +167,7 @@ QQC2.ApplicationWindow {
                         key = "s";
                     }
                     for (var i = 0; i < Math.abs(value); ++i) {
-                        keySender.sendKey("");
+                        keySender.sendKey(key);
                     }
                 }
             }
@@ -191,7 +191,7 @@ QQC2.ApplicationWindow {
                         key = "d";
                     }
                     for (var i = 0; i < Math.abs(value); ++i) {
-                        keySender.sendKey("");
+                        keySender.sendKey(key);
                     }
                 }
             }
