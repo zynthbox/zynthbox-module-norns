@@ -45,7 +45,9 @@
 #      error Requires X11R6
 #  endif
 #endif
-
+extern "C" {
+#include <xdo.h>
+}
 int	MyErrorHandler(Display *my_display, XErrorEvent *event)
 {
     fprintf(stderr, "Failed to send the X event.\n");
@@ -61,12 +63,23 @@ public:
 
     void findWindow()
     {
-        // Sniff window ID out using... ?
-        QString windowID = windowName.toLocal8Bit();
-        window = (Window)strtoul(windowID.toLocal8Bit(), NULL, 0);
-        if(window == 0) {
-            qWarning() << "No window found by that name! We will try again once you attempt to send keys, but this seems suboptimal.";
+        xdo_t* xdo = xdo_new(nullptr);
+        Window *windows;
+        unsigned int windowCount{0};
+        xdo_search_t search;
+        memset(&search, 0, sizeof(xdo_search_t));
+        search.winname = "matron";
+        search.searchmask = SEARCH_NAME;
+        search.require = xdo_search::SEARCH_ANY;
+        search.max_depth = 100;
+        xdo_search_windows(xdo, &search, &windows, &windowCount);
+        if (windowCount == 1) {
+            window = windows[0];
+        } else {
+            qWarning() << "We could not find a window named matron";
         }
+        free(windows);
+        xdo_free(xdo);
     }
 
     char *progname{nullptr};
@@ -207,11 +220,14 @@ void XSendKey::setWindowName(const QString& windowName)
 
 void XSendKey::sendKey(const QString& key)
 {
+    if (!d->window) {
+        d->findWindow();
+    }
     if (d->window) {
         char keyname[1024];
         int shift{0};
         int keysym{0};
-        int c, i;
+        int c;
         char *temp;
 
         strncpy(keyname, key.toLocal8Bit(), 1023);
@@ -267,7 +283,7 @@ void XSendKey::sendKey(const QString& key)
         /* keysym = strtoul(argv[ii], NULL, 0); */
 
         if (keyname[0] == 0) {
-            qWarning() << "You must specify a keyname";
+            qWarning() << "You must specify a keyname - attempted to send" << key;
         } else {
             // now do the work:
             d->SendKeyPressedEvent(keysym, shift);
