@@ -18,7 +18,7 @@ public:
     void setWindowName(const QString& windowName);
     Q_SIGNAL void windowNameChanged();
 
-    void sendKeyPress(const QString& key);
+    Q_INVOKABLE void sendKey(const QString& key);
 private:
     class Private;
     Private* d;

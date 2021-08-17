@@ -205,7 +205,7 @@ void XSendKey::setWindowName(const QString& windowName)
     d->findWindow();
 }
 
-void XSendKey::sendKeyPress(const QString& key)
+void XSendKey::sendKey(const QString& key)
 {
     if (d->window) {
         char keyname[1024];
