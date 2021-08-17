@@ -112,6 +112,7 @@ QQC2.ApplicationWindow {
                 width: component.buttonSize
                 height: width
                 palette: component.palette
+                onClicked: keySender.sendKey("z");
             }
         }
         Item {
@@ -124,6 +125,15 @@ QQC2.ApplicationWindow {
                 height: width
                 palette: component.palette
                 showRidges: true
+                onTick: {
+                    var key = "q";
+                    if (value > 0) {
+                        key = "a";
+                    }
+                    for (var i = 0; i < Math.abs(value); ++i) {
+                        keySender.sendKey("");
+                    }
+                }
             }
         }
     }
@@ -151,6 +161,15 @@ QQC2.ApplicationWindow {
                 width: height
                 palette: component.palette
                 showRidges: true
+                onTick: {
+                    var key = "w";
+                    if (value > 0) {
+                        key = "s";
+                    }
+                    for (var i = 0; i < Math.abs(value); ++i) {
+                        keySender.sendKey("");
+                    }
+                }
             }
         }
         Item {
@@ -166,6 +185,15 @@ QQC2.ApplicationWindow {
                 width: height
                 palette: component.palette
                 showRidges: true
+                onTick: {
+                    var key = "e";
+                    if (value > 0) {
+                        key = "d";
+                    }
+                    for (var i = 0; i < Math.abs(value); ++i) {
+                        keySender.sendKey("");
+                    }
+                }
             }
         }
         Item {
@@ -176,6 +204,7 @@ QQC2.ApplicationWindow {
                 height: component.buttonSize
                 width: height
                 palette: component.palette
+                onClicked: keySender.sendKey("x");
             }
         }
         Item {
@@ -190,6 +219,7 @@ QQC2.ApplicationWindow {
                 height: component.buttonSize
                 width: height
                 palette: component.palette
+                onClicked: keySender.sendKey("c");
             }
         }
         Item {
