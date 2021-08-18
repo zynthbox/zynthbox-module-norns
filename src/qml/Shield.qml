@@ -28,7 +28,7 @@ QQC2.Control {
         width: height * (component.showExit ? 3 : 2)
         height: parent.height / 8
         PushSlideControl {
-            text: "Start Fates"
+            text: "Start\nFates"
             enabled: !fatesProcess.isRunning
             onClicked: fatesProcess.start()
             height: parent.height
@@ -39,7 +39,7 @@ QQC2.Control {
             }
         }
         PushSlideControl {
-            text: "Stop Fates"
+            text: "Stop\nFates"
             onClicked: fatesEnderProcess.start()
             enabled: fatesProcess.isRunning
             height: parent.height
