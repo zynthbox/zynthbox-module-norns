@@ -38,7 +38,7 @@ QQC2.AbstractButton {
                 id: ridges
                 anchors.fill: parent
                 visible: component.showRidges
-                rotation: component.currentPointDistance + component.currentPointAngle
+                rotation: component.currentPointDistance// + component.currentPointAngle
                 Repeater {
                     model: 4
                     Item {
@@ -86,21 +86,25 @@ QQC2.AbstractButton {
                 id: pushSlidePoint;
             }
         ]
+        property point centerPoint: Qt.point(width / 2, height / 2)
         property point startPoint
         property point updatedPoint
         function pointDistance(point1, point2) {
-            var a = point1.x - point2.x;
+            //var a = point1.x - point2.x;
             var b = point1.y - point2.y;
-            return Math.sqrt( a*a + b*b );
+            return b;
+            //return Math.sqrt( a*a + b*b );
         }
         function pointAngle(point1, point2) {
+            //console.log(centerPoint + " " + point2);
             return Math.atan2(point2.y - point1.y, point2.x - point1.x) * 180 / Math.PI;
         }
         property int mostRecentTickTotal;
         function updateTick() {
-            var updatedTick = Math.round(component.currentPointAngle / 10) + Math.round(component.currentPointDistance / 20);
+            //var updatedTick = Math.round(component.currentPointAngle / 20 + component.currentPointDistance / 20);
+            var updatedTick = Math.round(component.currentPointDistance / 20);
             if (updatedTick != mostRecentTickTotal) {
-                component.tick(mostRecentTickTotal - updatedTick);
+                component.tick(-(mostRecentTickTotal - updatedTick));
                 mostRecentTickTotal = updatedTick;
             }
         }
@@ -119,7 +123,7 @@ QQC2.AbstractButton {
         onUpdated: {
             updatedPoint = Qt.point(pushSlidePoint.x, pushSlidePoint.y);
             component.currentPointDistance = pointDistance(startPoint, updatedPoint);
-            component.currentPointAngle = pointAngle(startPoint, updatedPoint);
+            component.currentPointAngle = pointAngle(centerPoint, updatedPoint);
             component.slideUpdated(updatedPoint);
             updateTick();
         }
