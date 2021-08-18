@@ -40,7 +40,6 @@
 #else
 #  define NeedFunctionPrototypes 1
 #  include <X11/Xlib.h>
-#  include <X11/keysym.h>
 #  if XlibSpecificationRelease != 6
 #      error Requires X11R6
 #  endif
@@ -48,22 +47,23 @@
 extern "C" {
 #include <xdo.h>
 }
-int	MyErrorHandler(Display *my_display, XErrorEvent *event)
-{
-    fprintf(stderr, "Failed to send the X event.\n");
-    return 1;
-}
 
 class XSendKey::Private {
 public:
     Private() {}
+    ~Private() {
+        xdo_free(xdo);
+    }
+    xdo_t *xdo{nullptr};
     QString windowName;
     Window window{0};
     Display *display{nullptr};
 
     void findWindow()
     {
-        xdo_t* xdo = xdo_new(nullptr);
+        if (!xdo) {
+            xdo = xdo_new(nullptr);
+        }
         Window *windows;
         unsigned int windowCount{0};
         xdo_search_t search;
@@ -74,111 +74,12 @@ public:
         search.max_depth = 100;
         xdo_search_windows(xdo, &search, &windows, &windowCount);
         if (windowCount == 1) {
+            qDebug() << "Found our window! Ready to send keys.";
             window = windows[0];
         } else {
             qWarning() << "We could not find a window named matron";
         }
         free(windows);
-        xdo_free(xdo);
-    }
-
-    char *progname{nullptr};
-    char *displayname{nullptr};
-
-    void	SendEvent(XKeyEvent *event)
-    {
-        XSync(display, False);
-        XSetErrorHandler(MyErrorHandler);
-        XSendEvent(display, window, True, KeyPressMask, (XEvent*)event);
-        XSync(display, False);
-        XSetErrorHandler(NULL);
-    }
-
-    void	SendKeyPressedEvent(KeySym keysym, unsigned int shift)
-    {
-        XKeyEvent		event;
-
-        // Meta not yet implemented (Alt used instead ;->)
-        int meta_mask=0;
-
-        event.display	= display;
-        event.window	= window;
-        event.root		= RootWindow(display, 0); // XXX nonzero screens?
-        event.subwindow	= None;
-        event.time		= CurrentTime;
-        event.x		= 1;
-        event.y		= 1;
-        event.x_root	= 1;
-        event.y_root	= 1;
-        event.same_screen	= True;
-        event.type		= KeyPress;
-        event.state		= 0;
-
-        //
-        // press down shift keys one at a time...
-        //
-
-        if (shift & ShiftMask) {
-            event.keycode = XKeysymToKeycode(display, XK_Shift_L);
-            SendEvent(&event);
-            event.state |= ShiftMask;
-        }
-        if (shift & ControlMask) {
-            event.keycode = XKeysymToKeycode(display, XK_Control_L);
-            SendEvent(&event);
-            event.state |= ControlMask;
-        }
-
-        if (shift & Mod1Mask) {
-            event.keycode = XKeysymToKeycode(display, XK_Alt_L);
-            SendEvent(&event);
-            event.state |= Mod1Mask;
-        }
-        if (shift & meta_mask) {
-            event.keycode = XKeysymToKeycode(display, XK_Meta_L);
-            SendEvent(&event);
-            event.state |= meta_mask;
-        }
-
-        //
-        //  Now with shift keys held down, send event for the key itself...
-        //
-
-
-        // fprintf(stderr, "sym: 0x%x, name: %s\n", keysym, keyname);
-        if (keysym != NoSymbol) {
-            event.keycode = XKeysymToKeycode(display, keysym);
-            // fprintf(stderr, "code: 0x%x, %d\n", event.keycode, event.keycode );
-            SendEvent(&event);
-
-            event.type = KeyRelease;
-            SendEvent(&event);
-        }
-
-        //
-        // Now release all the shift keys...
-        //
-
-        if (shift & ShiftMask) {
-            event.keycode = XKeysymToKeycode(display, XK_Shift_L);
-            SendEvent(&event);
-            event.state &= ~ShiftMask;
-        }
-        if (shift & ControlMask) {
-            event.keycode = XKeysymToKeycode(display, XK_Control_L);
-            SendEvent(&event);
-            event.state &= ~ControlMask;
-        }
-        if (shift & Mod1Mask) {
-            event.keycode = XKeysymToKeycode(display, XK_Alt_L);
-            SendEvent(&event);
-            event.state &= ~Mod1Mask;
-        }
-        if (shift & meta_mask) {
-            event.keycode = XKeysymToKeycode(display, XK_Meta_L);
-            SendEvent(&event);
-            event.state &= ~meta_mask;
-        }
     }
 };
 
@@ -224,70 +125,7 @@ void XSendKey::sendKey(const QString& key)
         d->findWindow();
     }
     if (d->window) {
-        char keyname[1024];
-        int shift{0};
-        int keysym{0};
-        int c;
-        char *temp;
-
-        strncpy(keyname, key.toLocal8Bit(), 1023);
-        keysym = 0;
-        shift  = 0;
-        // fprintf(stderr, "keyname: %s\n", keyname);
-        temp = strtok((char *)keyname, "+");
-        while (temp != NULL) {
-            // fprintf(stderr, "temp: %s\n", temp);
-            if (strcmp(temp, "Alt") == 0)
-                c = XK_Alt_L;
-            else if (strcmp(temp, "Control") == 0)
-                c = XK_Control_L;
-            else if (strcmp(temp, "Shift") == 0)
-                c = XK_Shift_L;
-            else
-                c = XStringToKeysym(temp);
-
-            if (c == 0) {
-                qWarning() << "Unknown key:" << temp;
-            }
-
-            switch (c) {
-                case XK_Shift_L:
-                case XK_Shift_R:
-                    shift |= ShiftMask;
-                    break;
-                case XK_Control_L:
-                case XK_Control_R:
-                    shift |= ControlMask;
-                    break;
-                case XK_Caps_Lock:
-                case XK_Shift_Lock:
-                    shift |= LockMask;
-                    break;
-                case XK_Meta_L:
-                case XK_Meta_R:
-                case XK_Alt_L:
-                case XK_Alt_R:
-                    shift |= Mod1Mask;
-                    break;
-                case XK_Super_L:
-                case XK_Super_R:
-                case XK_Hyper_L:
-                case XK_Hyper_R:
-                    break;
-                default:
-                    keysym = c;
-            }
-            // fprintf(stderr, "keysym: 0x%x, shift: %d\n", keysym, shift);
-            temp = strtok(NULL, "+");
-        }
-        /* keysym = strtoul(argv[ii], NULL, 0); */
-
-        if (keyname[0] == 0) {
-            qWarning() << "You must specify a keyname - attempted to send" << key;
-        } else {
-            // now do the work:
-            d->SendKeyPressedEvent(keysym, shift);
-        }
+        xdo_send_keysequence_window(d->xdo, d->window, key.toLatin1(), 0);
     } else {
         qWarning() << "You can't send a key to a window you've not identified";
     }
