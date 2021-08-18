@@ -1,0 +1,5 @@
+module org.zynthbox.norns.qmlshield
+plugin norns-qml-shield-plugin
+
+PushSlideControl 1.0 qml/PushSlideControl.qml
+Shield 1.0 qml/Shield.qml

@@ -24,4 +24,5 @@ find_package(X11 REQUIRED)
 include(KDEInstallDirs)
 include(ECMInstallIcons)
 
+add_subdirectory(app)
 add_subdirectory(src)

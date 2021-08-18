@@ -1,6 +1,6 @@
 <RCC>
     <qresource prefix="/">
-        <file>qml/main.qml</file>
+        <file>qml/Shield.qml</file>
         <file>qml/PushSlideControl.qml</file>
     </qresource>
 </RCC>
