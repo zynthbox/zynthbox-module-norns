@@ -9,6 +9,7 @@ QQC2.Control {
     id: component
     Component.onCompleted: fatesProcess.start()
 
+    property bool showExit: false
     property int buttonSize: height / 9
     property int dialSize: height / 6
 
@@ -24,7 +25,7 @@ QQC2.Control {
             margins: Kirigami.Units.largeSpacing
         }
         spacing: 0
-        width: height * 3
+        width: height * (component.showExit ? 3 : 2)
         height: parent.height / 8
         PushSlideControl {
             text: "Start Fates"
@@ -50,6 +51,7 @@ QQC2.Control {
         }
         PushSlideControl {
             text: "Exit"
+            visible: component.showExit
             onClicked: {
                 fatesEnderProcess.start()
                 quitTimer.start()

@@ -36,5 +36,6 @@ QQC2.ApplicationWindow {
     Shield {
         anchors.fill: parent
         palette: component.palette
+        showExit: true
     }
 }
