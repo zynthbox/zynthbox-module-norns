@@ -63,7 +63,6 @@ public:
                 findWindow();
                 if (window) {
                     windowFinder.stop();
-                    Q_EMIT q->windowLocated();
                 }
             }
         });
@@ -91,7 +90,8 @@ public:
             unsigned int windowCount{0};
             xdo_search_t search;
             memset(&search, 0, sizeof(xdo_search_t));
-            search.winname = windowName.toLocal8Bit();
+            std::string winname = windowName.toStdString();
+            search.winname = winname.c_str();
             search.searchmask = SEARCH_NAME;
             search.require = xdo_search::SEARCH_ANY;
             search.max_depth = 100;
@@ -105,6 +105,9 @@ public:
                 qWarning() << "We could not find a window named" << windowName;
             }
             free(windows);
+        }
+        if (window) {
+            Q_EMIT q->windowLocated();
         }
     }
 };
@@ -143,7 +146,7 @@ void XSendKey::setWindowName(const QString& windowName)
         Q_EMIT windowNameChanged();
     }
     d->findWindow();
-    if (!d->window) {
+    if (!d->window && !d->windowName.isEmpty()) {
         d->windowFinder.start();
     }
 }
