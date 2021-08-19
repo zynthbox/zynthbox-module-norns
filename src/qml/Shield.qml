@@ -15,8 +15,17 @@ QQC2.Control {
 
     XSendKey {
         id: keySender
-        windowName: "matron"
+        windowName: fatesProcess.running ? "matron" : ""
     }
+    function updateMatronPosition() {
+        var mappedPosition = mapToGlobal(component.x + 32, component.y + component.height - keySender.windowSize.height - 32);
+        keySender.windowPosition = mappedPosition;
+    }
+    onXChanged: updateMatronPosition()
+    onYChanged: updateMatronPosition()
+    onHeightChanged: updateMatronPosition()
+    onWidthChanged: updateMatronPosition()
+    Component.onCompleted: updateMatronPosition()
 
     Row {
         anchors {
