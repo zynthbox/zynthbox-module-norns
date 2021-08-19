@@ -15,7 +15,7 @@ QQC2.Control {
 
     XSendKey {
         id: keySender
-        windowName: fatesProcess.running ? "matron" : ""
+        windowName: fatesProcess.isRunning ? "matron" : ""
         onWindowLocated: component.updateMatronPosition();
     }
     function updateMatronPosition() {
