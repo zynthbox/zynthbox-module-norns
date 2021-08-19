@@ -66,6 +66,11 @@ public:
                 }
             }
         });
+        windowRaiserUpper.setInterval(100);
+        windowRaiserUpper.setSingleShot(false);
+        QObject::connect(&windowRaiserUpper, &QTimer::timeout, &windowRaiserUpper, [this](){
+            xdo_activate_window(xdo, window);
+        });
     }
     ~Private() {
         xdo_free(xdo);
@@ -77,6 +82,10 @@ public:
     Window window{0};
     Display *display{nullptr};
 
+    /// HACK Because we've got a window manager that doesn't understand always-on-top flags,
+    /// we'll just do that thing where we constantly raise the window up... which isn't pretty,
+    /// really, but it'll do for now
+    QTimer windowRaiserUpper;
     void findWindow()
     {
         window = 0;
@@ -107,7 +116,10 @@ public:
             free(windows);
         }
         if (window) {
-            Q_EMIT q->windowLocated();
+            QTimer::singleShot(100, q, &XSendKey::windowLocated);
+            windowRaiserUpper.start();
+        } else {
+            windowRaiserUpper.stop();
         }
     }
 };
@@ -196,7 +208,6 @@ void XSendKey::sendKey(const QString& key)
         d->findWindow();
     }
     if (d->window) {
-        xdo_activate_window(d->xdo, d->window);
         xdo_send_keysequence_window(d->xdo, d->window, key.toLatin1(), 0);
     } else {
         qWarning() << "You can't send a key to a window you've not identified";
