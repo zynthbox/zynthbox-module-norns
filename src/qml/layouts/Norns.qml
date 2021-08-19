@@ -58,7 +58,7 @@ LayoutBase {
                 width: component.buttonSize
                 height: width
                 palette: component.palette
-                onClicked: keySender.sendKey("z");
+                onClicked: component.keySender.sendKey("z");
             }
         }
         Item {
@@ -77,7 +77,7 @@ LayoutBase {
                         key = "a";
                     }
                     for (var i = 0; i < Math.abs(value); ++i) {
-                        keySender.sendKey(key);
+                        component.keySender.sendKey(key);
                     }
                 }
             }
@@ -113,7 +113,7 @@ LayoutBase {
                         key = "s";
                     }
                     for (var i = 0; i < Math.abs(value); ++i) {
-                        keySender.sendKey(key);
+                        component.keySender.sendKey(key);
                     }
                 }
             }
@@ -137,7 +137,7 @@ LayoutBase {
                         key = "d";
                     }
                     for (var i = 0; i < Math.abs(value); ++i) {
-                        keySender.sendKey(key);
+                        component.keySender.sendKey(key);
                     }
                 }
             }
@@ -150,7 +150,7 @@ LayoutBase {
                 height: component.buttonSize
                 width: height
                 palette: component.palette
-                onClicked: keySender.sendKey("x");
+                onClicked: component.keySender.sendKey("x");
             }
         }
         Item {
@@ -165,7 +165,7 @@ LayoutBase {
                 height: component.buttonSize
                 width: height
                 palette: component.palette
-                onClicked: keySender.sendKey("c");
+                onClicked: component.keySender.sendKey("c");
             }
         }
         Item {
