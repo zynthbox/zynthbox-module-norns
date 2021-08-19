@@ -21,6 +21,7 @@ public:
     QString windowName() const;
     void setWindowName(const QString &windowName);
     Q_SIGNAL void windowNameChanged();
+    Q_SIGNAL void windowLocated();
 
     QPoint windowPosition() const;
     void setWindowPosition(const QPoint &position);

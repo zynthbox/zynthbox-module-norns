@@ -51,19 +51,27 @@ extern "C" {
 
 class XSendKey::Private {
 public:
-    Private() {
+    Private(XSendKey *qq)
+        : q(qq)
+    {
         windowFinder.setInterval(100);
         windowFinder.setSingleShot(false);
         QObject::connect(&windowFinder, &QTimer::timeout, &windowFinder, [this](){
-            findWindow();
-            if (window) {
+            if (windowName.isEmpty()) {
                 windowFinder.stop();
+            } else {
+                findWindow();
+                if (window) {
+                    windowFinder.stop();
+                    Q_EMIT q->windowLocated();
+                }
             }
         });
     }
     ~Private() {
         xdo_free(xdo);
     }
+    XSendKey *q;
     QTimer windowFinder;
     xdo_t *xdo{nullptr};
     QString windowName;
@@ -72,31 +80,35 @@ public:
 
     void findWindow()
     {
-        if (!xdo) {
-            xdo = xdo_new(nullptr);
-        }
-        Window *windows;
-        unsigned int windowCount{0};
-        xdo_search_t search;
-        memset(&search, 0, sizeof(xdo_search_t));
-        search.winname = "matron";
-        search.searchmask = SEARCH_NAME;
-        search.require = xdo_search::SEARCH_ANY;
-        search.max_depth = 100;
-        xdo_search_windows(xdo, &search, &windows, &windowCount);
-        if (windowCount == 1) {
-            qDebug() << "Found our window! Ready to send keys.";
-            window = windows[0];
+        if (windowName.isEmpty()) {
+            window = 0;
         } else {
-            qWarning() << "We could not find a window named matron";
+            if (!xdo) {
+                xdo = xdo_new(nullptr);
+            }
+            Window *windows;
+            unsigned int windowCount{0};
+            xdo_search_t search;
+            memset(&search, 0, sizeof(xdo_search_t));
+            search.winname = "matron";
+            search.searchmask = SEARCH_NAME;
+            search.require = xdo_search::SEARCH_ANY;
+            search.max_depth = 100;
+            xdo_search_windows(xdo, &search, &windows, &windowCount);
+            if (windowCount == 1) {
+                qDebug() << "Found our window! Ready to send keys.";
+                window = windows[0];
+            } else {
+                qWarning() << "We could not find a window named" << windowName;
+            }
+            free(windows);
         }
-        free(windows);
     }
 };
 
 XSendKey::XSendKey(QObject* parent)
     : QObject(parent)
-    , d(new Private)
+    , d(new Private(this))
 {
     QString displayname = getenv("DISPLAY");
     if(displayname == NULL)
