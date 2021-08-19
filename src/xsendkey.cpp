@@ -164,6 +164,7 @@ void XSendKey::sendKey(const QString& key)
         d->findWindow();
     }
     if (d->window) {
+        xdo_activate_window(d->xdo, d->window);
         xdo_send_keysequence_window(d->xdo, d->window, key.toLatin1(), 0);
     } else {
         qWarning() << "You can't send a key to a window you've not identified";
