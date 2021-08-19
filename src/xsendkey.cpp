@@ -119,6 +119,45 @@ void XSendKey::setWindowName(const QString& windowName)
     d->findWindow();
 }
 
+QPoint XSendKey::windowPosition() const
+{
+    QPoint position;
+    if (d->window) {
+        int x{0}, y{0};
+        Screen *screen{nullptr};
+        xdo_get_window_location(d->xdo, d->window, &x, &y, &screen);
+        position.setX(x);
+        position.setY(y);
+    }
+    return position;
+}
+
+void XSendKey::setWindowPosition(const QPoint& position)
+{
+    if (d->window) {
+        xdo_move_window(d->xdo, d->window, position.x(), position.y());
+    }
+}
+
+QSize XSendKey::windowSize() const
+{
+    QSize size;
+    if (d->window) {
+        unsigned int x{0}, y{0};
+        xdo_get_window_size(d->xdo, d->window, &x, &y);
+        size.setWidth(x);
+        size.setHeight(y);
+    }
+    return size;
+}
+
+void XSendKey::setWindowSize(const QSize& size)
+{
+    if (d->window) {
+        xdo_set_window_size(d->xdo, d->window, size.width(), size.height(), 0);
+    }
+}
+
 void XSendKey::sendKey(const QString& key)
 {
     if (!d->window) {
