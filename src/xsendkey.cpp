@@ -30,6 +30,7 @@
 #include "xsendkey.h"
 
 #include <QDebug>
+#include <QTimer>
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -50,10 +51,20 @@ extern "C" {
 
 class XSendKey::Private {
 public:
-    Private() {}
+    Private() {
+        windowFinder.setInterval(100);
+        windowFinder.setSingleShot(false);
+        QObject::connect(&windowFinder, &QTimer::timeout, &windowFinder, [this](){
+            findWindow();
+            if (window) {
+                windowFinder.stop();
+            }
+        });
+    }
     ~Private() {
         xdo_free(xdo);
     }
+    QTimer windowFinder;
     xdo_t *xdo{nullptr};
     QString windowName;
     Window window{0};
@@ -117,6 +128,9 @@ void XSendKey::setWindowName(const QString& windowName)
         Q_EMIT windowNameChanged();
     }
     d->findWindow();
+    if (!d->window) {
+        d->windowFinder.start();
+    }
 }
 
 QPoint XSendKey::windowPosition() const
