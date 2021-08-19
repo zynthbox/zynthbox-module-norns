@@ -80,8 +80,9 @@ public:
 
     void findWindow()
     {
+        window = 0;
         if (windowName.isEmpty()) {
-            window = 0;
+            qDebug() << "No window name set, so no window for us.";
         } else {
             if (!xdo) {
                 xdo = xdo_new(nullptr);
@@ -90,7 +91,7 @@ public:
             unsigned int windowCount{0};
             xdo_search_t search;
             memset(&search, 0, sizeof(xdo_search_t));
-            search.winname = "matron";
+            search.winname = windowName.toLocal8Bit();
             search.searchmask = SEARCH_NAME;
             search.require = xdo_search::SEARCH_ANY;
             search.max_depth = 100;
@@ -98,6 +99,8 @@ public:
             if (windowCount == 1) {
                 qDebug() << "Found our window! Ready to send keys.";
                 window = windows[0];
+            } else if (windowCount > 0) {
+                qWarning() << "There are too many windows with this name, what do?!" << windowName;
             } else {
                 qWarning() << "We could not find a window named" << windowName;
             }
