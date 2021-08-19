@@ -22,7 +22,7 @@ QQC2.Control {
         executableFile: "/home/we/fates-start.sh"
     }
     XSendKey {
-        id: keySender
+        id: mainKeySender
         windowName: fatesProcess.isRunning ? "matron" : ""
         onWindowLocated: component.updateMatronPosition();
     }
@@ -30,27 +30,27 @@ QQC2.Control {
         var xPos = layoutLoader.item.matronX;
         if (xPos > 0 && xPos < 1) {
             // Relative positioning
-            xPos = component.width * xPos - keySender.windowSize.width * xPos;
+            xPos = component.width * xPos - mainKeySender.windowSize.width * xPos;
             xPos = component.x + xPos;
         } else if (xPos < 0) {
             // Absolute positioning, from the bottom
-            xPos = component.x + component.width - keySender.windowSize.width - xPos;
+            xPos = component.x + component.width - mainKeySender.windowSize.width - xPos;
         } else {
             xPos = component.x + xPos;
         }
         var yPos = layoutLoader.item.matronY;
         if (yPos > 0 && yPos < 1) {
             // Relative positioning
-            yPos = component.height * yPos - keySender.windowSize.height * yPos;
+            yPos = component.height * yPos - mainKeySender.windowSize.height * yPos;
             yPos = component.y + yPos;
         } else if (yPos < 0) {
             // Absolute positioning, from the bottom
-            yPos = component.y + component.height - keySender.windowSize.height - yPos;
+            yPos = component.y + component.height - mainKeySender.windowSize.height - yPos;
         } else {
             yPos = component.y + yPos;
         }
         var mappedPosition = mapToGlobal(xPos, yPos);
-        keySender.windowPosition = mappedPosition;
+        mainKeySender.windowPosition = mappedPosition;
         //console.log(mappedPosition);
     }
     onXChanged: updateMatronPosition()
@@ -60,7 +60,7 @@ QQC2.Control {
 
     contentItem: Loader {
         id: layoutLoader
-        sourceComponent: nornsLayout
+        sourceComponent: zynthBoxLargeLayout
     }
     Timer {
         id: quitTimer
@@ -82,9 +82,18 @@ QQC2.Control {
     }
 
     Component {
+        id: zynthBoxLargeLayout
+        ShieldLayouts.ZynthBoxLarge {
+            keySender: mainKeySender
+            fatesStarter: fatesProcess
+            fatesEnder: fatesEnderProcess
+            showExit: component.showExit
+        }
+    }
+    Component {
         id: nornsLayout
         ShieldLayouts.Norns {
-            keySender: keySender
+            keySender: mainKeySender
             fatesStarter: fatesProcess
             fatesEnder: fatesEnderProcess
             showExit: component.showExit
