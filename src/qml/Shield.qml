@@ -8,6 +8,7 @@ import org.zynthbox.norns.qmlshield 1.0
 QQC2.Control {
     id: component
     Component.onCompleted: fatesProcess.start()
+    Component.onDestruction: fatesEnderProcess.startDetached()
 
     property bool showExit: false
     property int buttonSize: height / 9

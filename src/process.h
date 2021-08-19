@@ -1,3 +1,6 @@
+#ifndef PROCESS_H
+#define PROCESS_H
+
 #include <QProcess>
 #include <QVariant>
 
@@ -16,11 +19,23 @@ public:
             }
         );
     }
+    ~Process() override {
+        kill();
+    }
 
+    Q_INVOKABLE void startDetached() {
+        QStringList args;
+
+        // convert QVariantList from QML to QStringList for QProcess
+        for (int i = 0; i < m_arguments.length(); i++)
+            args << m_arguments[i].toString();
+
+        QProcess::startDetached(m_executableFile, args);
+    }
     Q_INVOKABLE void start() {
         QStringList args;
 
-        // convert QVariantList from QML to QStringList for QProcess 
+        // convert QVariantList from QML to QStringList for QProcess
         for (int i = 0; i < m_arguments.length(); i++)
             args << m_arguments[i].toString();
 
@@ -37,4 +52,6 @@ public:
     QVariantList m_arguments;
     Q_SIGNAL void isRunningChanged();
     bool m_isRunning;
-}; 
+};
+
+#endif//PROCESS_H
