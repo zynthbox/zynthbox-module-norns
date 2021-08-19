@@ -7,8 +7,8 @@ Item {
     property QtObject keySender;
     property QtObject fatesStarter;
     property QtObject fatesEnder;
-    property int matronX: Kirigami.Units.largeSpacing
-    property int matronY: -Kirigami.Units.largeSpacing
+    property real matronX: Kirigami.Units.largeSpacing
+    property real matronY: -Kirigami.Units.largeSpacing
     property bool showExit;
     signal requestQuit();
 }
