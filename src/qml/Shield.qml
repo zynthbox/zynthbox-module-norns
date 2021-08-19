@@ -19,7 +19,7 @@ QQC2.Control {
         onWindowLocated: component.updateMatronPosition();
     }
     function updateMatronPosition() {
-        var mappedPosition = mapToGlobal(component.x + 32, component.y + component.height - keySender.windowSize.height - 32);
+        var mappedPosition = mapToGlobal(component.x + Kirigami.Units.largeSpacing, component.y + component.height - keySender.windowSize.height - Kirigami.Units.largeSpacing);
         keySender.windowPosition = mappedPosition;
     }
     onXChanged: updateMatronPosition()
