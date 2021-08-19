@@ -1,9 +1,10 @@
 import QtQuick 2.4 
-import QtQuick.Layouts 1.4
 import QtQuick.Window 2.11
 import QtQuick.Controls 2.4 as QQC2
 import org.kde.kirigami 2.4 as Kirigami
 import org.zynthbox.norns.qmlshield 1.0
+
+import "layouts" as ShieldLayouts
 
 QQC2.Control {
     id: component
@@ -11,206 +12,82 @@ QQC2.Control {
     Component.onDestruction: fatesEnderProcess.startDetached()
 
     property bool showExit: false
-    property int buttonSize: height / 9
-    property int dialSize: height / 6
 
+    Process {
+        id: fatesEnderProcess
+        executableFile: "/home/we/fates-end.sh"
+    }
+    Process {
+        id: fatesProcess
+        executableFile: "/home/we/fates-start.sh"
+    }
     XSendKey {
         id: keySender
         windowName: fatesProcess.isRunning ? "matron" : ""
         onWindowLocated: component.updateMatronPosition();
     }
     function updateMatronPosition() {
-        var mappedPosition = mapToGlobal(component.x + Kirigami.Units.largeSpacing, component.y + component.height - keySender.windowSize.height - Kirigami.Units.largeSpacing);
+        var xPos = layoutLoader.item.matronX;
+        if (xPos > 0 && xPos < 1) {
+            // Relative positioning
+            xPos = component.width * xPos - keySender.windowSize.width * xPos;
+            xPos = component.x + xPos;
+        } else if (xPos < 0) {
+            // Absolute positioning, from the bottom
+            xPos = component.x + component.width - keySender.windowSize.width - xPos;
+        } else {
+            xPos = component.x + xPos;
+        }
+        var yPos = layoutLoader.item.matronY;
+        if (yPos > 0 && yPos < 1) {
+            // Relative positioning
+            yPos = component.height * yPos - keySender.windowSize.height * yPos;
+            yPos = component.y + yPos;
+        } else if (yPos < 0) {
+            // Absolute positioning, from the bottom
+            yPos = component.y + component.height - keySender.windowSize.height - yPos;
+        } else {
+            yPos = component.y + yPos;
+        }
+        var mappedPosition = mapToGlobal(xPos, yPos);
         keySender.windowPosition = mappedPosition;
+        //console.log(mappedPosition);
     }
     onXChanged: updateMatronPosition()
     onYChanged: updateMatronPosition()
     onHeightChanged: updateMatronPosition()
     onWidthChanged: updateMatronPosition()
 
-    Row {
-        anchors {
-            top: parent.top
-            right: parent.right
-            margins: Kirigami.Units.largeSpacing
-        }
-        spacing: 0
-        width: height * (component.showExit ? 3 : 2)
-        height: parent.height / 8
-        PushSlideControl {
-            text: "Start\nFates"
-            enabled: !fatesProcess.isRunning
-            onClicked: fatesProcess.start()
-            height: parent.height
-            width: height
-            Process {
-                id: fatesProcess
-                executableFile: "/home/we/fates-start.sh"
-            }
-        }
-        PushSlideControl {
-            text: "Stop\nFates"
-            onClicked: fatesEnderProcess.start()
-            enabled: fatesProcess.isRunning
-            height: parent.height
-            width: height
-            Process {
-                id: fatesEnderProcess
-                executableFile: "/home/we/fates-end.sh"
-            }
-        }
-        PushSlideControl {
-            text: "Exit"
-            visible: component.showExit
-            onClicked: {
-                fatesEnderProcess.start()
-                quitTimer.start()
-            }
-            height: parent.height
-            width: height
-            Timer {
-                id: quitTimer
-                interval: 100
-                repeat: true
-                running: false
-                onTriggered: {
-                    if (!fatesEnderProcess.isRunning) {
-                        Qt.quit()
-                    }
-                }
+    contentItem: Loader {
+        id: layoutLoader
+        sourceComponent: nornsLayout
+    }
+    Timer {
+        id: quitTimer
+        interval: 100
+        repeat: true
+        running: false
+        onTriggered: {
+            if (!fatesEnderProcess.isRunning) {
+                Qt.quit()
             }
         }
     }
-    RowLayout {
-        anchors {
-            left: parent.left
-            leftMargin: Kirigami.Units.largeSpacing
-            bottom: parent.verticalCenter
-        }
-        width: height * 2
-        height: parent.height / 6
-        Item {
-            Layout.fillWidth: true
-            Layout.fillHeight: true
-            implicitWidth: parent.width / 2
-            PushSlideControl {
-                anchors.centerIn: parent
-                width: component.buttonSize
-                height: width
-                palette: component.palette
-                onClicked: keySender.sendKey("z");
-            }
-        }
-        Item {
-            Layout.fillWidth: true
-            Layout.fillHeight: true
-            implicitWidth: parent.width / 2
-            PushSlideControl {
-                anchors.centerIn: parent
-                width: component.dialSize
-                height: width
-                palette: component.palette
-                showRidges: true
-                onTick: {
-                    var key = "q";
-                    if (value > 0) {
-                        key = "a";
-                    }
-                    for (var i = 0; i < Math.abs(value); ++i) {
-                        keySender.sendKey(key);
-                    }
-                }
-            }
+    Connections {
+        target: layoutLoader.item
+        onRequestQuit: {
+            fatesEnderProcess.start()
+            quitTimer.start()
         }
     }
-    Grid {
-        anchors {
-            right: parent.right
-            bottom: parent.bottom
-            margins: Kirigami.Units.largeSpacing
-        }
-        height: width / 2
-        width: parent.width / 2
-        columns: 4
-        rows: 2
-        spacing: 0
-        Item {
-            height: parent.height / 2
-            width: parent.width / 4
-        }
-        Item {
-            height: parent.height / 2
-            width: parent.width / 4
-            PushSlideControl {
-                anchors.centerIn: parent
-                height: component.dialSize
-                width: height
-                palette: component.palette
-                showRidges: true
-                onTick: {
-                    var key = "w";
-                    if (value > 0) {
-                        key = "s";
-                    }
-                    for (var i = 0; i < Math.abs(value); ++i) {
-                        keySender.sendKey(key);
-                    }
-                }
-            }
-        }
-        Item {
-            height: parent.height / 2
-            width: parent.width / 4
-        }
-        Item {
-            height: parent.height / 2
-            width: parent.width / 4
-            PushSlideControl {
-                anchors.centerIn: parent
-                height: component.dialSize
-                width: height
-                palette: component.palette
-                showRidges: true
-                onTick: {
-                    var key = "e";
-                    if (value > 0) {
-                        key = "d";
-                    }
-                    for (var i = 0; i < Math.abs(value); ++i) {
-                        keySender.sendKey(key);
-                    }
-                }
-            }
-        }
-        Item {
-            height: parent.height / 2
-            width: parent.width / 4
-            PushSlideControl {
-                anchors.centerIn: parent
-                height: component.buttonSize
-                width: height
-                palette: component.palette
-                onClicked: keySender.sendKey("x");
-            }
-        }
-        Item {
-            height: parent.height / 2
-            width: parent.width / 4
-        }
-        Item {
-            height: parent.height / 2
-            width: parent.width / 4
-            PushSlideControl {
-                anchors.centerIn: parent
-                height: component.buttonSize
-                width: height
-                palette: component.palette
-                onClicked: keySender.sendKey("c");
-            }
-        }
-        Item {
-            height: parent.height / 2
-            width: parent.width / 4
+
+    Component {
+        id: nornsLayout
+        ShieldLayouts.Norns {
+            keySender: keySender
+            fatesStarter: fatesProcess
+            fatesEnder: fatesEnderProcess
+            showExit: component.showExit
         }
     }
 }

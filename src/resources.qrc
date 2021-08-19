@@ -2,5 +2,8 @@
     <qresource prefix="/">
         <file>qml/Shield.qml</file>
         <file>qml/PushSlideControl.qml</file>
+        <file>qml/layouts/LayoutBase.qml</file>
+        <file>qml/layouts/Norns.qml</file>
+        <file>qml/layouts/ZynthBoxLarge.qml</file>
     </qresource>
 </RCC>
