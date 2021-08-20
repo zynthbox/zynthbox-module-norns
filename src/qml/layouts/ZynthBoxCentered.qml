@@ -6,6 +6,8 @@ import org.zynthbox.norns.qmlshield 1.0
 
 LayoutBase {
     id: component
+    matronX: 0.5
+    matronY: 0.5
     property int buttonSize: fakeNornsDisplay.height / 4
     property int dialSize: fakeNornsDisplay.height / 3
     Row {
