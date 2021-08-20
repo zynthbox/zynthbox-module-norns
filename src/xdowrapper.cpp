@@ -221,8 +221,9 @@ void XDoWrapper::sendKeyUp(const QString& key)
     }
     if (d->window) {
         xdo_send_keysequence_window_up(d->xdo, d->window, key.toLatin1(), 0);
+        d->windowRaiserUpper.start();
     } else {
-        qWarning() << "You can't send a key to a window you've not identified";
+        qWarning() << "You can't send a key-up to a window you've not identified";
     }
 }
 
@@ -232,8 +233,10 @@ void XDoWrapper::sendKeyDown(const QString& key)
         d->findWindow();
     }
     if (d->window) {
+        d->windowRaiserUpper.stop();
+        xdo_activate_window(d->xdo, d->window);
         xdo_send_keysequence_window_down(d->xdo, d->window, key.toLatin1(), 0);
     } else {
-        qWarning() << "You can't send a key to a window you've not identified";
+        qWarning() << "You can't send a key-down to a window you've not identified";
     }
 }
