@@ -8,10 +8,17 @@ import "layouts" as ShieldLayouts
 
 QQC2.Control {
     id: component
+    property bool showExtraActions: false
+    property alias fatesRunning: fatesProcess.isRunning
+    function startNorns() {
+        fatesProcess.start();
+    }
+    function endNorns() {
+        fatesEnderProcess.start();
+    }
+
     Component.onCompleted: fatesProcess.start()
     Component.onDestruction: fatesEnderProcess.startDetached()
-
-    property bool showExit: false
 
     Process {
         id: fatesEnderProcess
@@ -76,8 +83,14 @@ QQC2.Control {
     Connections {
         target: layoutLoader.item
         onRequestQuit: {
-            fatesEnderProcess.start()
-            quitTimer.start()
+            fatesEnderProcess.start();
+            quitTimer.start();
+        }
+        onRequestFatesStart: {
+            component.startNorns();
+        }
+        onRequestFatesEnd: {
+            component.endNorns();
         }
     }
 
@@ -87,7 +100,7 @@ QQC2.Control {
             keySender: mainKeySender
             fatesStarter: fatesProcess
             fatesEnder: fatesEnderProcess
-            showExit: component.showExit
+            showExtraActions: component.showExtraActions
         }
     }
     Component {
@@ -96,7 +109,7 @@ QQC2.Control {
             keySender: mainKeySender
             fatesStarter: fatesProcess
             fatesEnder: fatesEnderProcess
-            showExit: component.showExit
+            showExtraActions: component.showExtraActions
         }
     }
 }

@@ -16,26 +16,26 @@ LayoutBase {
             horizontalCenter: parent.horizontalCenter
             margins: Kirigami.Units.largeSpacing
         }
-        spacing: 0
-        width: height * (component.showExit ? 3 : 2)
+        width: height * 3
         height: parent.height / 8
+        visible: component.showExtraActions
+        spacing: 0
         PushSlideControl {
             text: "Start\nFates"
             enabled: !component.fatesStarter.isRunning
-            onClicked: component.fatesStarter.start()
+            onClicked: component.requestFatesStart()
             height: parent.height
             width: height
         }
         PushSlideControl {
             text: "Stop\nFates"
-            onClicked: component.fatesEnder.start()
+            onClicked: component.requestFatesEnd()
             enabled: component.fatesStarter.isRunning
             height: parent.height
             width: height
         }
         PushSlideControl {
             text: "Exit"
-            visible: component.showExit
             onClicked: {
                 component.requestQuit()
             }

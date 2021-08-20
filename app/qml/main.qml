@@ -9,8 +9,8 @@ QQC2.ApplicationWindow {
     id: component
     x: 0
     y: 0
-    width: Screen.desktopAvailableWidth
-    height: Screen.desktopAvailableHeight
+    width: 1024
+    height: 600
     visible: true
     palette {
         alternateBase: "#091010"
@@ -36,6 +36,6 @@ QQC2.ApplicationWindow {
     Shield {
         anchors.fill: parent
         palette: component.palette
-        showExit: true
+        showExtraActions: true
     }
 }

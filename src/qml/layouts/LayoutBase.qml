@@ -9,6 +9,8 @@ Item {
     property QtObject fatesEnder;
     property real matronX: Kirigami.Units.largeSpacing
     property real matronY: -Kirigami.Units.largeSpacing
-    property bool showExit;
+    property bool showExtraActions;
     signal requestQuit();
+    signal requestFatesStart();
+    signal requestFatesEnd();
 }
