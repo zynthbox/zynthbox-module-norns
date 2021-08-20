@@ -31,6 +31,7 @@ public:
     void setWindowSize(const QSize &size);
     Q_SIGNAL void windowSizeChanged();
 
+    Q_INVOKABLE void activateWindow();
     Q_INVOKABLE void sendKey(const QString &key);
     Q_INVOKABLE void sendKeyDown(const QString &key);
     Q_INVOKABLE void sendKeyUp(const QString &key);

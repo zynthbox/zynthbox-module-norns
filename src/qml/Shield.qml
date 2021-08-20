@@ -65,9 +65,16 @@ QQC2.Control {
     onHeightChanged: updateMatronPosition()
     onWidthChanged: updateMatronPosition()
 
-    contentItem: Loader {
-        id: layoutLoader
-        sourceComponent: zynthBoxLargeLayout
+    contentItem: Item {
+        MultiPointTouchArea {
+            anchors.fill: parent
+            onPressed: mainKeySender.activateWindow()
+        }
+        Loader {
+            anchors.fill: parent
+            id: layoutLoader
+            sourceComponent: zynthBoxLargeLayout
+        }
     }
     Timer {
         id: quitTimer

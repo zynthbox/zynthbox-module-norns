@@ -66,7 +66,7 @@ public:
                 }
             }
         });
-        windowRaiserUpper.setInterval(100);
+        windowRaiserUpper.setInterval(250);
         windowRaiserUpper.setSingleShot(false);
         QObject::connect(&windowRaiserUpper, &QTimer::timeout, &windowRaiserUpper, [this](){
             xdo_activate_window(xdo, window);
@@ -202,6 +202,21 @@ void XDoWrapper::setWindowSize(const QSize& size)
     }
 }
 
+void XDoWrapper::activateWindow()
+{
+    if (!d->window) {
+        d->findWindow();
+    }
+    if (d->window) {
+        d->windowRaiserUpper.stop();
+        xdo_activate_window(d->xdo, d->window);
+        xdo_wait_for_window_active(d->xdo, d->window, 1);
+        d->windowRaiserUpper.start();
+    } else {
+        qWarning() << "You can't activate a window you've not identified";
+    }
+}
+
 void XDoWrapper::sendKey(const QString& key)
 {
     if (!d->window) {
@@ -210,6 +225,7 @@ void XDoWrapper::sendKey(const QString& key)
     if (d->window) {
         d->windowRaiserUpper.stop();
         xdo_activate_window(d->xdo, d->window);
+        xdo_wait_for_window_active(d->xdo, d->window, 1);
         xdo_send_keysequence_window(d->xdo, d->window, key.toLatin1(), 0);
         d->windowRaiserUpper.start();
     } else {
@@ -238,6 +254,7 @@ void XDoWrapper::sendKeyDown(const QString& key)
     if (d->window) {
         d->windowRaiserUpper.stop();
         xdo_activate_window(d->xdo, d->window);
+        xdo_wait_for_window_active(d->xdo, d->window, 1);
         xdo_send_keysequence_window_down(d->xdo, d->window, key.toLatin1(), 0);
     } else {
         qWarning() << "You can't send a key-down to a window you've not identified";
