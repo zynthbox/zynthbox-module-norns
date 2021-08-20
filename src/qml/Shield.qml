@@ -73,7 +73,7 @@ QQC2.Control {
         Loader {
             anchors.fill: parent
             id: layoutLoader
-            sourceComponent: zynthBoxLargeLayout
+            sourceComponent: zynthBoxCenteredLayout
         }
     }
     Timer {
@@ -101,6 +101,15 @@ QQC2.Control {
         }
     }
 
+    Component {
+        id: zynthBoxCenteredLayout
+        ShieldLayouts.ZynthBoxCentered {
+            keySender: mainKeySender
+            fatesStarter: fatesProcess
+            fatesEnder: fatesEnderProcess
+            showExtraActions: component.showExtraActions
+        }
+    }
     Component {
         id: zynthBoxLargeLayout
         ShieldLayouts.ZynthBoxLarge {
