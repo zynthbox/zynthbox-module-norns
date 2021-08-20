@@ -78,10 +78,9 @@ LayoutBase {
                         key = "a";
                     }
                     for (var i = 0; i < Math.abs(value); ++i) {
-                        component.keySender.sendKeyDown(key);
+                        component.keySender.sendKey(key);
                     }
                 }
-                onReleased: component.keySender.sendKeyUp("0");
             }
         }
     }
@@ -115,10 +114,9 @@ LayoutBase {
                         key = "s";
                     }
                     for (var i = 0; i < Math.abs(value); ++i) {
-                        component.keySender.sendKeyDown(key);
+                        component.keySender.sendKey(key);
                     }
                 }
-                onReleased: component.keySender.sendKeyUp("0");
             }
         }
         Item {
@@ -140,10 +138,9 @@ LayoutBase {
                         key = "d";
                     }
                     for (var i = 0; i < Math.abs(value); ++i) {
-                        component.keySender.sendKeyDown(key);
+                        component.keySender.sendKey(key);
                     }
                 }
-                onReleased: component.keySender.sendKeyUp("0");
             }
         }
         Item {
