@@ -115,7 +115,7 @@ LayoutBase {
             top: fakeNornsDisplay.bottom
             left: fakeNornsDisplay.left
             right: fakeNornsDisplay.right
-            topMargin: Kirigami.Units.largeSpacing
+            topMargin: Kirigami.Units.largeSpacing + Kirigami.Units.largeSpacing * 2
         }
         height: component.dialSize
         spacing: 0
