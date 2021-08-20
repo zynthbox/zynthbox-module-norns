@@ -137,7 +137,7 @@ LayoutBase {
                         key = "a";
                     }
                     for (var i = 0; i < Math.abs(value); ++i) {
-                        component.keySender.sendKeyUp(key);
+                        component.keySender.sendKey(key);
                     }
                 }
             }
@@ -166,7 +166,7 @@ LayoutBase {
                         key = "s";
                     }
                     for (var i = 0; i < Math.abs(value); ++i) {
-                        component.keySender.sendKeyUp(key);
+                        component.keySender.sendKey(key);
                     }
                 }
             }
@@ -195,7 +195,7 @@ LayoutBase {
                         key = "d";
                     }
                     for (var i = 0; i < Math.abs(value); ++i) {
-                        component.keySender.sendKeyUp(key);
+                        component.keySender.sendKey(key);
                     }
                 }
             }
