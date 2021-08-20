@@ -102,7 +102,7 @@ QQC2.AbstractButton {
         property int mostRecentTickTotal;
         function updateTick() {
             //var updatedTick = Math.round(component.currentPointAngle / 20 + component.currentPointDistance / 20);
-            var updatedTick = Math.round(component.currentPointDistance / 20);
+            var updatedTick = Math.round(component.currentPointDistance / 5);
             if (updatedTick != mostRecentTickTotal) {
                 component.tick(-(mostRecentTickTotal - updatedTick));
                 mostRecentTickTotal = updatedTick;
