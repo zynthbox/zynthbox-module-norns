@@ -72,6 +72,7 @@ LayoutBase {
                 height: width
                 palette: component.palette
                 showRidges: true
+                onPressed: component.keySender.activateWindow()
                 onTick: {
                     var key = "q";
                     if (value > 0) {
@@ -108,6 +109,7 @@ LayoutBase {
                 width: height
                 palette: component.palette
                 showRidges: true
+                onPressed: component.keySender.activateWindow()
                 onTick: {
                     var key = "w";
                     if (value > 0) {
@@ -132,6 +134,7 @@ LayoutBase {
                 width: height
                 palette: component.palette
                 showRidges: true
+                onPressed: component.keySender.activateWindow()
                 onTick: {
                     var key = "e";
                     if (value > 0) {
