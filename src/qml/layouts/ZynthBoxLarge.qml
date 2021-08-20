@@ -136,9 +136,10 @@ LayoutBase {
                         key = "a";
                     }
                     for (var i = 0; i < Math.abs(value); ++i) {
-                        component.keySender.sendKey(key);
+                        component.keySender.sendKeyDown(key);
                     }
                 }
+                onReleased: component.keySender.sendKeyUp("0");
             }
             QQC2.Label {
                 anchors {
@@ -164,9 +165,10 @@ LayoutBase {
                         key = "s";
                     }
                     for (var i = 0; i < Math.abs(value); ++i) {
-                        component.keySender.sendKey(key);
+                        component.keySender.sendKeyDown(key);
                     }
                 }
+                onReleased: component.keySender.sendKeyUp("0");
             }
             QQC2.Label {
                 anchors {
@@ -192,9 +194,10 @@ LayoutBase {
                         key = "d";
                     }
                     for (var i = 0; i < Math.abs(value); ++i) {
-                        component.keySender.sendKey(key);
+                        component.keySender.sendKeyDown(key);
                     }
                 }
+                onReleased: component.keySender.sendKeyUp("0");
             }
             QQC2.Label {
                 anchors {
