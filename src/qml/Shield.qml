@@ -28,7 +28,7 @@ QQC2.Control {
         id: fatesProcess
         executableFile: "/home/we/fates-start.sh"
     }
-    XSendKey {
+    XDoWrapper {
         id: mainKeySender
         windowName: fatesProcess.isRunning ? "matron" : ""
         onWindowLocated: component.updateMatronPosition();

@@ -27,7 +27,7 @@
 *
 */
 
-#include "xsendkey.h"
+#include "xdowrapper.h"
 
 #include <QDebug>
 #include <QTimer>
@@ -49,9 +49,9 @@ extern "C" {
 #include <xdo.h>
 }
 
-class XSendKey::Private {
+class XDoWrapper::Private {
 public:
-    Private(XSendKey *qq)
+    Private(XDoWrapper *qq)
         : q(qq)
     {
         windowFinder.setInterval(100);
@@ -75,7 +75,7 @@ public:
     ~Private() {
         xdo_free(xdo);
     }
-    XSendKey *q;
+    XDoWrapper *q;
     QTimer windowFinder;
     xdo_t *xdo{nullptr};
     QString windowName;
@@ -116,7 +116,7 @@ public:
             free(windows);
         }
         if (window) {
-            QTimer::singleShot(100, q, &XSendKey::windowLocated);
+            QTimer::singleShot(100, q, &XDoWrapper::windowLocated);
             windowRaiserUpper.start();
         } else {
             windowRaiserUpper.stop();
@@ -124,7 +124,7 @@ public:
     }
 };
 
-XSendKey::XSendKey(QObject* parent)
+XDoWrapper::XDoWrapper(QObject* parent)
     : QObject(parent)
     , d(new Private(this))
 {
@@ -140,18 +140,18 @@ XSendKey::XSendKey(QObject* parent)
     }
 }
 
-XSendKey::~XSendKey()
+XDoWrapper::~XDoWrapper()
 {
     delete d;
     XCloseDisplay(d->display);
 }
 
-QString XSendKey::windowName() const
+QString XDoWrapper::windowName() const
 {
     return d->windowName;
 }
 
-void XSendKey::setWindowName(const QString& windowName)
+void XDoWrapper::setWindowName(const QString& windowName)
 {
     if (d->windowName != windowName) {
         d->windowName = windowName;
@@ -163,7 +163,7 @@ void XSendKey::setWindowName(const QString& windowName)
     }
 }
 
-QPoint XSendKey::windowPosition() const
+QPoint XDoWrapper::windowPosition() const
 {
     QPoint position;
     if (d->window) {
@@ -176,14 +176,14 @@ QPoint XSendKey::windowPosition() const
     return position;
 }
 
-void XSendKey::setWindowPosition(const QPoint& position)
+void XDoWrapper::setWindowPosition(const QPoint& position)
 {
     if (d->window) {
         xdo_move_window(d->xdo, d->window, position.x(), position.y());
     }
 }
 
-QSize XSendKey::windowSize() const
+QSize XDoWrapper::windowSize() const
 {
     QSize size;
     if (d->window) {
@@ -195,20 +195,44 @@ QSize XSendKey::windowSize() const
     return size;
 }
 
-void XSendKey::setWindowSize(const QSize& size)
+void XDoWrapper::setWindowSize(const QSize& size)
 {
     if (d->window) {
         xdo_set_window_size(d->xdo, d->window, size.width(), size.height(), 0);
     }
 }
 
-void XSendKey::sendKey(const QString& key)
+void XDoWrapper::sendKey(const QString& key)
 {
     if (!d->window) {
         d->findWindow();
     }
     if (d->window) {
         xdo_send_keysequence_window(d->xdo, d->window, key.toLatin1(), 0);
+    } else {
+        qWarning() << "You can't send a key to a window you've not identified";
+    }
+}
+
+void XDoWrapper::sendKeyUp(const QString& key)
+{
+    if (!d->window) {
+        d->findWindow();
+    }
+    if (d->window) {
+        xdo_send_keysequence_window_up(d->xdo, d->window, key.toLatin1(), 0);
+    } else {
+        qWarning() << "You can't send a key to a window you've not identified";
+    }
+}
+
+void XDoWrapper::sendKeyDown(const QString& key)
+{
+    if (!d->window) {
+        d->findWindow();
+    }
+    if (d->window) {
+        xdo_send_keysequence_window_down(d->xdo, d->window, key.toLatin1(), 0);
     } else {
         qWarning() << "You can't send a key to a window you've not identified";
     }

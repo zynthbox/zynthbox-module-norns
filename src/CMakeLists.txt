@@ -3,7 +3,7 @@ target_sources(norns-qml-shield-plugin
     PRIVATE
     qmlplugin.cpp
     process.h
-    xsendkey.cpp
+    xdowrapper.cpp
     resources.qrc
 )
 target_link_libraries(norns-qml-shield-plugin Qt5::Core Qt5::Qml ${X11_LIBRARIES} ${LIBXDO_LIBRARIES})

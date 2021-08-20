@@ -24,7 +24,7 @@
 #include <QtQml/qqml.h>
 
 #include "process.h"
-#include "xsendkey.h"
+#include "xdowrapper.h"
 
 void QmlPlugins::initializeEngine(QQmlEngine *, const char *)
 {
@@ -35,5 +35,5 @@ void QmlPlugins::registerTypes(const char *uri)
     qmlRegisterType(QUrl("qrc:/qml/Shield.qml"), uri, 1, 0, "Shield");
     qmlRegisterType(QUrl("qrc:/qml/PushSlideControl.qml"), uri, 1, 0, "PushSlideControl");
     qmlRegisterType<Process>(uri, 1, 0, "Process");
-    qmlRegisterType<XSendKey>(uri, 1, 0, "XSendKey");
+    qmlRegisterType<XDoWrapper>(uri, 1, 0, "XDoWrapper");
 }

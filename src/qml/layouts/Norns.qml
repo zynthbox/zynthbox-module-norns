@@ -58,7 +58,8 @@ LayoutBase {
                 width: component.buttonSize
                 height: width
                 palette: component.palette
-                onClicked: component.keySender.sendKey("z");
+                onPressed: component.keySender.sendKeyDown("z");
+                onReleased: component.keySender.sendKeyUp("z");
             }
         }
         Item {
@@ -150,7 +151,8 @@ LayoutBase {
                 height: component.buttonSize
                 width: height
                 palette: component.palette
-                onClicked: component.keySender.sendKey("x");
+                onPressed: component.keySender.sendKeyDown("x");
+                onReleased: component.keySender.sendKeyUp("x");
             }
         }
         Item {
@@ -165,7 +167,8 @@ LayoutBase {
                 height: component.buttonSize
                 width: height
                 palette: component.palette
-                onClicked: component.keySender.sendKey("c");
+                onPressed: component.keySender.sendKeyDown("c");
+                onReleased: component.keySender.sendKeyUp("c");
             }
         }
         Item {
