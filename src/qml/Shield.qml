@@ -22,11 +22,11 @@ QQC2.Control {
 
     Process {
         id: fatesEnderProcess
-        executableFile: "/home/we/fates-end.sh"
+        executableFile: NORNS_STOP_SCRIPT
     }
     Process {
         id: fatesProcess
-        executableFile: "/home/we/fates-start.sh"
+        executableFile: NORNS_START_SCRIPT
     }
     XDoWrapper {
         id: mainKeySender
