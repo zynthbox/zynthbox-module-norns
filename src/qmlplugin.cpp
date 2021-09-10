@@ -22,12 +22,26 @@
 #include "qmlplugin.h"
 
 #include <QtQml/qqml.h>
+#include <QQmlEngine>
+#include <QQmlContext>
+#include <QDir>
 
 #include "process.h"
 #include "xdowrapper.h"
 
-void QmlPlugins::initializeEngine(QQmlEngine *, const char *)
+void QmlPlugins::initializeEngine(QQmlEngine *engine, const char *)
 {
+    QString start_script = qgetenv("NORNS_START_SCRIPT");
+    if (start_script.isEmpty())
+        start_script = QDir::homePath() + "/fates-start.sh";
+
+    engine->rootContext()->setContextProperty("NORNS_START_SCRIPT", start_script);
+
+    QString stop_script = qgetenv("NORNS_STOP_SCRIPT");
+    if (stop_script.isEmpty())
+        stop_script = QDir::homePath() + "/fates-end.sh";
+
+    engine->rootContext()->setContextProperty("NORNS_STOP_SCRIPT", stop_script);
 }
 
 void QmlPlugins::registerTypes(const char *uri)
