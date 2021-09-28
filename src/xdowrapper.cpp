@@ -29,6 +29,8 @@
 
 #include "xdowrapper.h"
 
+#include <QGuiApplication>
+#include <QWindow>
 #include <QDebug>
 #include <QTimer>
 
@@ -66,16 +68,17 @@ public:
                 }
             }
         });
-        windowRaiserUpper.setInterval(250);
-        windowRaiserUpper.setSingleShot(false);
-        QObject::connect(&windowRaiserUpper, &QTimer::timeout, &windowRaiserUpper, [this](){
-            xdo_activate_window(xdo, window);
-        });
+//         windowRaiserUpper.setInterval(250);
+//         windowRaiserUpper.setSingleShot(false);
+//         QObject::connect(&windowRaiserUpper, &QTimer::timeout, &windowRaiserUpper, [this](){
+//             xdo_activate_window(xdo, window);
+//         });
     }
     ~Private() {
         xdo_free(xdo);
     }
     XDoWrapper *q;
+    Window ourWindow{0};
     QTimer windowFinder;
     xdo_t *xdo{nullptr};
     QString windowName;
@@ -85,7 +88,7 @@ public:
     /// HACK Because we've got a window manager that doesn't understand always-on-top flags,
     /// we'll just do that thing where we constantly raise the window up... which isn't pretty,
     /// really, but it'll do for now
-    QTimer windowRaiserUpper;
+//     QTimer windowRaiserUpper;
     void findWindow()
     {
         window = 0;
@@ -117,9 +120,10 @@ public:
         }
         if (window) {
             QTimer::singleShot(100, q, &XDoWrapper::windowLocated);
-            windowRaiserUpper.start();
+            QTimer::singleShot(150, q, &XDoWrapper::windowSizeChanged);
+//             windowRaiserUpper.start();
         } else {
-            windowRaiserUpper.stop();
+//             windowRaiserUpper.stop();
         }
     }
 };
@@ -138,6 +142,13 @@ XDoWrapper::XDoWrapper(QObject* parent)
         qWarning() << "Can't open display" << displayname;
         exit(1);
     }
+    for (QWindow *window : QGuiApplication::topLevelWindows()) {
+        qDebug() << "Top level window found:" << window->title();
+        d->ourWindow = window->winId();
+    }
+    connect(this, &XDoWrapper::windowLocated, this, [this](){
+        xdo_reparent_window(d->xdo, d->window, d->ourWindow);
+    });
 }
 
 XDoWrapper::~XDoWrapper()
@@ -208,10 +219,10 @@ void XDoWrapper::activateWindow()
         d->findWindow();
     }
     if (d->window) {
-        d->windowRaiserUpper.stop();
+//         d->windowRaiserUpper.stop();
         xdo_activate_window(d->xdo, d->window);
-        xdo_wait_for_window_active(d->xdo, d->window, 1);
-        d->windowRaiserUpper.start();
+//         xdo_wait_for_window_active(d->xdo, d->window, 1);
+//         d->windowRaiserUpper.start();
     } else {
         qWarning() << "You can't activate a window you've not identified";
     }
@@ -223,11 +234,11 @@ void XDoWrapper::sendKey(const QString& key)
         d->findWindow();
     }
     if (d->window) {
-        d->windowRaiserUpper.stop();
+//         d->windowRaiserUpper.stop();
         xdo_activate_window(d->xdo, d->window);
-        xdo_wait_for_window_active(d->xdo, d->window, 1);
+//         xdo_wait_for_window_active(d->xdo, d->window, 1);
         xdo_send_keysequence_window(d->xdo, d->window, key.toLatin1(), 0);
-        d->windowRaiserUpper.start();
+//         d->windowRaiserUpper.start();
     } else {
         qWarning() << "You can't send a key to a window you've not identified";
     }
@@ -240,7 +251,7 @@ void XDoWrapper::sendKeyUp(const QString& key)
     }
     if (d->window) {
         xdo_send_keysequence_window_up(d->xdo, d->window, key.toLatin1(), 0);
-        d->windowRaiserUpper.start();
+//         d->windowRaiserUpper.start();
     } else {
         qWarning() << "You can't send a key-up to a window you've not identified";
     }
@@ -252,9 +263,9 @@ void XDoWrapper::sendKeyDown(const QString& key)
         d->findWindow();
     }
     if (d->window) {
-        d->windowRaiserUpper.stop();
+//         d->windowRaiserUpper.stop();
         xdo_activate_window(d->xdo, d->window);
-        xdo_wait_for_window_active(d->xdo, d->window, 1);
+//         xdo_wait_for_window_active(d->xdo, d->window, 1);
         xdo_send_keysequence_window_down(d->xdo, d->window, key.toLatin1(), 0);
     } else {
         qWarning() << "You can't send a key-down to a window you've not identified";

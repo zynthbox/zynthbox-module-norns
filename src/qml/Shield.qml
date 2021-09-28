@@ -56,7 +56,7 @@ QQC2.Control {
         } else {
             yPos = component.y + yPos;
         }
-        var mappedPosition = mapToGlobal(xPos, yPos);
+        var mappedPosition = Qt.point(xPos, yPos);
         mainKeySender.windowPosition = mappedPosition;
         //console.log(mappedPosition);
     }
