@@ -33,6 +33,18 @@ QQC2.ApplicationWindow {
         window: "silver"
         windowText: "#091010"
     }
+    background: Rectangle {
+        width: component.width
+        height: component.height
+        color: component.palette.base
+        Image {
+            anchors.fill: parent
+            fillMode: Image.PreserveAspectCrop
+            clip: true
+            source: NORNS_BACKGROUND_IMAGE
+            asynchronous: true
+        }
+    }
     Shield {
         anchors.fill: parent
         palette: component.palette
