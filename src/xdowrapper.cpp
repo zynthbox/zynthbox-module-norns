@@ -176,6 +176,7 @@ void XDoWrapper::setWindowPosition(const QPoint& position)
 {
     if (d->window) {
         xdo_move_window(d->xdo, d->window, position.x(), position.y());
+        xdo_activate_window(d->xdo, d->window);
     }
 }
 
