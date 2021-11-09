@@ -97,13 +97,28 @@ public:
             search.winname = winname.c_str();
             search.searchmask = SEARCH_NAME;
             search.require = xdo_search::SEARCH_ANY;
-            search.max_depth = 100;
+            search.max_depth = 1;
             xdo_search_windows(xdo, &search, &windows, &windowCount);
             if (windowCount == 1) {
                 qDebug() << "Found our window! Ready to send keys.";
                 window = windows[0];
             } else if (windowCount > 0) {
-                qWarning() << "There are too many windows with this name, what do?!" << windowName;
+                for (int windowIndex = 0; windowIndex < windowCount; ++windowIndex) {
+                    unsigned char *checkName;
+                    int checkNameLength;
+                    int checkNameType;
+                    xdo_get_window_name(xdo, windows[windowIndex], &checkName, &checkNameLength, &checkNameType);
+                    QString easierName = QString::fromUtf8((char*)checkName, checkNameLength);
+                    if (easierName == windowName) {
+                        window = windows[windowIndex];
+                        break;
+                    }
+                }
+                if (window) {
+                    qDebug() << "Found our window! Ready to send keys.";
+                } else {
+                    qWarning() << "We couldn't identify a window with strictly the given name" << windowName;
+                }
             } else {
                 qWarning() << "We could not find a window named" << windowName;
             }
@@ -113,7 +128,6 @@ public:
             // If we don't move the window before embedding it, we may end up having a ghost left behind, which looks pretty odd
             xdo_move_window(xdo, window, -1000, -1000);
             xdo_activate_window(xdo, window);
-            xdo_wait_for_window_active(xdo, window, 1);
             xdo_reparent_window(xdo, window, ourWindow);
             QTimer::singleShot(1, q, &XDoWrapper::windowLocated);
         }
