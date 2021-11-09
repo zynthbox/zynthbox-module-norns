@@ -47,6 +47,9 @@ void QmlPlugins::initializeEngine(QQmlEngine *engine, const char *)
 
     // Set this to file:///some/directory/with/apicture.jpg or similar to use that image as a background
     QString background_image = qgetenv("NORNS_BACKGROUND_IMAGE");
+    if (background_image.isEmpty()) {
+        background_image = "/zynthian/zynthian-ui/img/brushed-steel.png";
+    }
     engine->rootContext()->setContextProperty("NORNS_BACKGROUND_IMAGE", background_image);
 }
 
