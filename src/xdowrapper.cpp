@@ -110,6 +110,10 @@ public:
             free(windows);
         }
         if (window) {
+            // If we don't move the window before embedding it, we may end up having a ghost left behind, which looks pretty odd
+            xdo_move_window(xdo, window, -1000, -1000);
+            xdo_activate_window(xdo, window);
+            xdo_wait_for_window_active(xdo, window, 1);
             xdo_reparent_window(xdo, window, ourWindow);
             QTimer::singleShot(1, q, &XDoWrapper::windowLocated);
         }
