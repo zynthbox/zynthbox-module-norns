@@ -34,9 +34,11 @@
 #include <QDebug>
 #include <QTimer>
 
+#include <chrono>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <thread>
 
 #ifdef WIN32
 #  include "windows_x11.h"
@@ -97,7 +99,7 @@ public:
             search.winname = winname.c_str();
             search.searchmask = SEARCH_NAME;
             search.require = xdo_search::SEARCH_ANY;
-            search.max_depth = 1;
+            search.max_depth = 100;
             xdo_search_windows(xdo, &search, &windows, &windowCount);
             if (windowCount == 1) {
                 qDebug() << "Found our window! Ready to send keys.";
@@ -115,7 +117,7 @@ public:
                     }
                 }
                 if (window) {
-                    qDebug() << "Found our window! Ready to send keys.";
+                    qDebug() << "Found our window among others! Ready to send keys.";
                 } else {
                     qWarning() << "We couldn't identify a window with strictly the given name" << windowName;
                 }
@@ -126,8 +128,12 @@ public:
         }
         if (window) {
             // If we don't move the window before embedding it, we may end up having a ghost left behind, which looks pretty odd
-            xdo_move_window(xdo, window, -1000, -1000);
+            xdo_map_window(xdo, window);
+            std::this_thread::sleep_for(std::chrono::milliseconds(10));
+            xdo_move_window(xdo, window, 2000, 2000);
+            std::this_thread::sleep_for(std::chrono::milliseconds(10));
             xdo_activate_window(xdo, window);
+            std::this_thread::sleep_for(std::chrono::milliseconds(10));
             xdo_reparent_window(xdo, window, ourWindow);
             QTimer::singleShot(1, q, &XDoWrapper::windowLocated);
         }
