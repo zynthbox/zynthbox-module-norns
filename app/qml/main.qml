@@ -12,6 +12,7 @@ QQC2.ApplicationWindow {
     width: 1024
     height: 600
     visible: true
+    title: "//////// norns"
     palette {
         alternateBase: "#091010"
         base: "silver"
