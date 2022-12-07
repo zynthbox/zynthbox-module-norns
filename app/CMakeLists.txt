@@ -2,7 +2,7 @@ add_executable(norns-qml-shield)
 target_sources(norns-qml-shield
     PRIVATE
     main.cpp
-    resources.qrc
+    app_resources.qrc
 )
 target_link_libraries(norns-qml-shield Qt5::Core Qt5::Qml Qt5::Quick)
 
